@@ -1,0 +1,26 @@
+HKCR
+{
+	NScales.Scales.1 = s 'Scales Class'
+	{
+		CLSID = s '{6A4848A2-A424-43AD-9913-64C9942FACB2}'
+	}
+	NScales.Scales = s 'Scales Class'
+	{		
+		CurVer = s 'NScales.Scales.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {6A4848A2-A424-43AD-9913-64C9942FACB2} = s 'Scales Class'
+		{
+			ProgID = s 'NScales.Scales.1'
+			VersionIndependentProgID = s 'NScales.Scales'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{FC35197B-1A7A-42BE-96A6-0668D16B98BB}'
+			Version = s '1.0'
+		}
+	}
+}

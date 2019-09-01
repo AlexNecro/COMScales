@@ -1,0 +1,55 @@
+// COMScales.idl : IDL source for COMScales
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (COMScales.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(78E833BC-CEE8-43DA-A7DA-5CFE28D27462),
+	dual,
+	nonextensible,
+	pointer_default(unique),
+	oleautomation
+]
+interface IScales : IDispatch{
+	[id(1)] HRESULT InitModule([in] BSTR KeyString, [out, retval] VARIANT_BOOL* OK);
+	[id(2)] HRESULT DoneModule();
+	[id(3)] HRESULT ConnectDevice([in] BSTR DeviceType, [in] BSTR PortName, /*[in] LONG Address,*/ [in] LONG BaudRate, [in] FLOAT multiplier);
+	[id(4)] HRESULT DisconnectDevice();
+	[id(5)] HRESULT GetWeight([out, retval] DOUBLE* AWeight);
+	[id(7)] HRESULT IsStable([out, retval] VARIANT_BOOL* AMotion);	
+	[id(9)] HRESULT GetStateInfo([out, retval] BSTR* strState);
+	[id(10)] HRESULT SetZero();	
+	[id(13)] HRESULT GetVersionInfo([out, retval] BSTR* strInfo);
+	[id(14)] HRESULT GetHelp([out, retval]  BSTR* strInfo);
+	[id(15)] HRESULT ListSupportedDevices([out, retval]  BSTR* strInfo);
+	[id(16)] HRESULT ListPorts([out, retval]  BSTR* strInfo);
+	[id(17)] HRESULT IsOK([out, retval] VARIANT_BOOL* OK);
+	[id(18)] HRESULT ConnectIndicator([in] BSTR PortName, FLOAT multiplier);
+	[id(19)] HRESULT DisconnectIndicator();	
+	[id(20)] HRESULT ConnectLogFile([in] BSTR Path);//echo to the file each time weight changed
+	[id(21)] HRESULT GetHistoryLength([out, retval] LONG* Length);//get number of stored measurements
+	[id(22)] HRESULT GetHistoryTimeN([in] DWORD Index, [out, retval] DATE* DateTime);//get measure time by index
+	[id(23)] HRESULT GetHistoryWeightN([in] DWORD Index, [out, retval] DOUBLE* Weight);//get measurement by index
+	[id(24)] HRESULT IsPortConnected([in] BSTR PortName, [in] LONG BaudRate, [out, retval] VARIANT_BOOL* HasData); //returns true, if comport available and has data ready
+};
+[
+	uuid(FC35197B-1A7A-42BE-96A6-0668D16B98BB),
+	version(1.0),
+]
+library COMScalesLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(6A4848A2-A424-43AD-9913-64C9942FACB2)		
+	]
+	coclass Scales
+	{
+		[default] interface IScales;
+	};
+};
+
