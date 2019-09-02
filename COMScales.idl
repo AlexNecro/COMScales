@@ -18,7 +18,7 @@ import "ocidl.idl";
 interface IScales : IDispatch{
 	[id(1)] HRESULT InitModule([in] BSTR KeyString, [out, retval] VARIANT_BOOL* OK);
 	[id(2)] HRESULT DoneModule();
-	[id(3)] HRESULT ConnectDevice([in] BSTR DeviceType, [in] BSTR PortName, /*[in] LONG Address,*/ [in] LONG BaudRate, [in] FLOAT multiplier);
+	[id(3)] HRESULT ConnectDevice([in] BSTR DeviceType, [in] BSTR PortName, [in] LONG BaudRate, [in] FLOAT multiplier);
 	[id(4)] HRESULT DisconnectDevice();
 	[id(5)] HRESULT GetWeight([out, retval] DOUBLE* AWeight);
 	[id(7)] HRESULT IsStable([out, retval] VARIANT_BOOL* AMotion);	

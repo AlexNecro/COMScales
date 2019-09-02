@@ -275,15 +275,12 @@ regsvr32 /s c:\upd\COMScales.dll</Command>
     <ClInclude Include="COMScales_i.h" />
     <ClInclude Include="dllmain.h" />
     <ClInclude Include="Indicator.h" />
-    <ClInclude Include="IScalesHW.h" />
-    <ClInclude Include="LicenseInfo.h" />
     <ClInclude Include="NLog.h" />
     <ClInclude Include="NScalesDecoder.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scales.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TestScalesDecoder.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="COMScales.rc" />

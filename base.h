@@ -29,7 +29,7 @@ struct Measurement {
 
 	bool isOK() {
 		if (state == ScalesStates::OK) {
-			//|| state == ScalesStates::Timeout) {
+
 			return true;
 		}
 		return false;
@@ -43,8 +43,5 @@ struct Measurement {
 		return _weight.weight == weight;
 	}
 
-	//bool isWaiting(DWORD lastTimeSuccess, DWORD maxWaitTime = 3000) { //no signal, but timeout is not expired
-//		if ((state == ScalesStates::NoSignal || state == ScalesStates::Timeout) && ((GetTickCount() - lastTimeSuccess) < maxWaitTime)) return true;
-//		return false;
-//	}
+
 };//class Measurement

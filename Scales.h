@@ -1,8 +1,7 @@
 // Scales.h : Declaration of the CScales
 
 #pragma once
-//microsoft sdks\windows\v7.1a\include\shlobj.h(1151): warning C4091: 'typedef ': ignored on left of 'tagGPFIDL_FLAGS' when no variable is declared:
-#pragma warning(disable: 4091)
+
 #include "resource.h"       // main symbols
 
 
@@ -12,13 +11,6 @@
 #include <Shlobj.h>
 #include "Indicator.h"
 #include "NScalesDecoder.h"
-//#include "NScalesBU4263M1.h"
-//#include "NScalesIND310.h"
-//#include "NScalesTest.h"
-//#include "NScalesCAS6000.h"
-//#include "NScalesHBT9.h"
-//#include "NScalesFT11.h"
-//#include "NScalesVT220.h"
 
 //use separate thread for measurement:
 #define MODEL_SEPARATE 1

@@ -2,8 +2,6 @@
 
 #include "stdafx.h"
 #include "Scales.h"
-#include "LicenseInfo.h"
-#include "TestScalesDecoder.h"
 
 #define MAX_KEY_LENGTH 255
 #define MAX_VALUE_NAME 16383
@@ -107,8 +105,7 @@ Measurement CScales::TestWeight(Measurement& weight)
 STDMETHODIMP CScales::InitModule(BSTR KeyString, VARIANT_BOOL* OK)
 {
 	CString str;
-	COLE2T tempstr(KeyString);
-	if (licenseState != LicenseState::Trial && _tcscmp(KeyString, licenseKey) != 0) licenseState = LicenseState::NotLicensed;	
+	COLE2T tempstr(KeyString);	
 
 	log->LogF(TEXT("InitModule(%s): License: %d"), (TCHAR*)tempstr, licenseState);	
 	if (!(licenseState == LicenseState::Hardware || licenseState == LicenseState::Trial)) {
@@ -150,7 +147,7 @@ STDMETHODIMP CScales::DoneModule()
 	
 	DisconnectDevice();	
 	if (MODEL_SEPARATE == 1 && workerThread) {
-		//how to stop thread?		
+			
 		Log(TEXT("DoneModule(): stopping thread"));
 		threadStarted = false;
 		WaitForSingleObject(workerThread, 1000);
@@ -319,25 +316,25 @@ STDMETHODIMP CScales::IsStable(VARIANT_BOOL * AMotion)
 STDMETHODIMP CScales::GetStateInfo(BSTR* strState)
 {	
 	if (licenseState == LicenseState::Expired) {
-		*strState = SysAllocString(TEXT("Срок действия лицензии истёк"));
+		*strState = SysAllocString(TEXT("РЎСЂРѕРє РґРµР№СЃС‚РІРёСЏ Р»РёС†РµРЅР·РёРё РёСЃС‚С‘Рє"));
 		log->Log(TEXT("GetStateInfo(): license expired"));
 	}
 	else if (licenseState == LicenseState::NotLicensed) {
-		*strState = SysAllocString(TEXT("Лицензия не обнаружена"));
+		*strState = SysAllocString(TEXT("Р›РёС†РµРЅР·РёСЏ РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅР°"));
 		log->Log(TEXT("GetStateInfo(): no license"));
 	}
 	else if (!isInit()) {
-		*strState = SysAllocString(TEXT("Компонента не инициализирована"));
+		*strState = SysAllocString(TEXT("РљРѕРјРїРѕРЅРµРЅС‚Р° РЅРµ РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°РЅР°"));
 		log->Log(TEXT("GetStateInfo(): not inited"));
 	}
 	else if (history.empty()) {
-		*strState = SysAllocString(TEXT("Данные ещё не получены"));
+		*strState = SysAllocString(TEXT("Р”Р°РЅРЅС‹Рµ РµС‰С‘ РЅРµ РїРѕР»СѓС‡РµРЅС‹"));
 		log->Log(TEXT("GetStateInfo(): no data"));
 	}
 	else {
 		try {
 			if ((GetTickCount() - lastTimeSuccess) >= maxTimeSuccess) {
-				*strState = SysAllocString(TEXT("Истекло время ожидания"));
+				*strState = SysAllocString(TEXT("РСЃС‚РµРєР»Рѕ РІСЂРµРјСЏ РѕР¶РёРґР°РЅРёСЏ"));
 			} else {
 			Measurement weight = history.back();
 			log->LogF(TEXT("GetStateInfo(): w=%f s=%d"), weight.weight, weight.state);
@@ -346,22 +343,22 @@ STDMETHODIMP CScales::GetStateInfo(BSTR* strState)
 				*strState = SysAllocString(TEXT("OK"));
 				break;
 			case ScalesStates::Unstable:
-				*strState = SysAllocString(TEXT("Вес не стабилизирован"));
+				*strState = SysAllocString(TEXT("Р’РµСЃ РЅРµ СЃС‚Р°Р±РёР»РёР·РёСЂРѕРІР°РЅ"));
 				break;			
 			case ScalesStates::NoSignal:
-				*strState = SysAllocString(TEXT("Нет сигнала от весов"));
+				*strState = SysAllocString(TEXT("РќРµС‚ СЃРёРіРЅР°Р»Р° РѕС‚ РІРµСЃРѕРІ"));
 				break;
 			case ScalesStates::NotConnected:
-				*strState = SysAllocString(TEXT("Нет связи с весами"));
+				*strState = SysAllocString(TEXT("РќРµС‚ СЃРІСЏР·Рё СЃ РІРµСЃР°РјРё"));
 				break;
 			case ScalesStates::PortError:
-				*strState = SysAllocString(TEXT("Ошибка открытия порта"));
+				*strState = SysAllocString(TEXT("РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ РїРѕСЂС‚Р°"));
 				break;
 			case ScalesStates::WrongSignal:
-				*strState = SysAllocString(TEXT("Вероятно, требуется перезагрузка компьютера и весов"));
+				*strState = SysAllocString(TEXT("Р’РµСЂРѕСЏС‚РЅРѕ, С‚СЂРµР±СѓРµС‚СЃСЏ РїРµСЂРµР·Р°РіСЂСѓР·РєР° РєРѕРјРїСЊСЋС‚РµСЂР° Рё РІРµСЃРѕРІ"));
 				break;
 			default:
-				*strState = SysAllocString(TEXT("Неизвестная ошибка"));
+				*strState = SysAllocString(TEXT("РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР°"));
 			}
 			}
 		} catch (...) {
@@ -382,7 +379,7 @@ STDMETHODIMP CScales::GetVersionInfo(BSTR* strInfo)
 	CString a;
 	a.Format(TEXT("GetVersionInfo()"));
 	Log(a);
-	*strInfo = SysAllocString(TEXT("Компонента NScales.Scales для получения веса с весового оборудования."));
+	*strInfo = SysAllocString(TEXT("РљРѕРјРїРѕРЅРµРЅС‚Р° NScales.Scales РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РІРµСЃР° СЃ РІРµСЃРѕРІРѕРіРѕ РѕР±РѕСЂСѓРґРѕРІР°РЅРёСЏ."));
 	return S_OK;
 }
 
@@ -391,13 +388,13 @@ STDMETHODIMP CScales::GetHelp(BSTR* strInfo)
 	CString a;	
 	a.Format(TEXT("GetHelp()"));
 	Log(a);	
-	*strInfo = SysAllocString(TEXT("Чтобы протестировать интерфейс, вызовите ConnectDevice(\"Тест\",\"\", 0, 1)"));
+	*strInfo = SysAllocString(TEXT("Р§С‚РѕР±С‹ РїСЂРѕС‚РµСЃС‚РёСЂРѕРІР°С‚СЊ РёРЅС‚РµСЂС„РµР№СЃ, РІС‹Р·РѕРІРёС‚Рµ ConnectDevice(\"РўРµСЃС‚\",\"\", 0, 1)"));
 	return S_OK;
 }
 
 STDMETHODIMP CScales::ListSupportedDevices(BSTR* strInfo)
 {
-	//TCHAR* str = TEXT("Тест,БУ 4263 М1,Mettler Toledo IND310,CAS-6000,HBT-9,FT11,VT-220");
+	//TCHAR* str = TEXT("РўРµСЃС‚,Р‘РЈ 4263 Рњ1,Mettler Toledo IND310,CAS-6000,HBT-9,FT11,VT-220");
 	CString str = ScalesSettings::getAllNames();
 	CString a;
 	a.Format(TEXT("ListSupported() = %s"), str.GetBuffer());
