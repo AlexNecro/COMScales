@@ -74,41 +74,7 @@ CScales::CScales()
 
 	SYSTEMTIME st;
 	GetSystemTime(&st);
-/*#ifdef DEBUG
-	if (st.wYear > BUILD_YEAR && st.wMonth > BUILD_MONTH + 1) {
-		licenseState = LicenseState::Expired;
-	}
-	else {
-		licenseState = LicenseState::Trial;
-		licensed0 = 0xDEAD;
-	}
-#else
-	licenseState = LicenseState::Hardware;
-	licensed0 = 0xDEAD;
-	TCHAR szPath[MAX_PATH];
-	if (SUCCEEDED(SHGetFolderPath(NULL,
-		CSIDL_PERSONAL | CSIDL_FLAG_CREATE,
-		NULL,
-		0,
-		szPath)))
-	{
-		PathAppend(szPath, licenseNoticeName);
-	}
-	try {
-		CAtlFile file;
-		HRESULT res = file.Create(
-			szPath,
-			GENERIC_WRITE,
-			FILE_SHARE_READ,
-			CREATE_ALWAYS,
-			FILE_ATTRIBUTE_NORMAL);
-		if (SUCCEEDED(res)) {
-			file.Write(licenseNotice, strlen(licenseNotice));
-			file.Close();
-		}
-	} catch (...) {
-	}
-#endif // DEBUG */
+
 	scalesPort = 0;
 	scalesBuffer = 0;
 	indicator = 0;
@@ -135,9 +101,6 @@ CScales::~CScales() {
 
 Measurement CScales::TestWeight(Measurement& weight)
 {	
-	/*double mult = 0.0;
-	if (Licensed(16) == ((COMPort::Dead() << 16) + COMPort::Beef())) mult += 1.0;
-	weight.scale(mult);*/
 	return weight;
 }
 
@@ -146,7 +109,7 @@ STDMETHODIMP CScales::InitModule(BSTR KeyString, VARIANT_BOOL* OK)
 	CString str;
 	COLE2T tempstr(KeyString);
 	if (licenseState != LicenseState::Trial && _tcscmp(KeyString, licenseKey) != 0) licenseState = LicenseState::NotLicensed;	
-	//if (_tcscmp(KeyString, licenseKey) != 0) licenseState = LicenseState::NotLicensed;
+
 	log->LogF(TEXT("InitModule(%s): License: %d"), (TCHAR*)tempstr, licenseState);	
 	if (!(licenseState == LicenseState::Hardware || licenseState == LicenseState::Trial)) {
 		*OK = VARIANT_FALSE;
@@ -184,7 +147,7 @@ STDMETHODIMP CScales::InitModule(BSTR KeyString, VARIANT_BOOL* OK)
 
 STDMETHODIMP CScales::DoneModule()
 {
-	// TODO: Add your implementation code here
+	
 	DisconnectDevice();	
 	if (MODEL_SEPARATE == 1 && workerThread) {
 		//how to stop thread?		
@@ -252,7 +215,7 @@ void CScales::DeleteScales() {
 
 STDMETHODIMP CScales::DisconnectDevice()
 {
-	// TODO: Add your implementation code here	
+		
 	if (scalesPort) {
 		Log(TEXT("DisconnectDevice()"));
 		scalesPort->ClosePort();
@@ -293,11 +256,11 @@ Measurement CScales::ReadWeight() { //reads weight from com-port, this function 
 bool CScales::IsWeightChanged(const Measurement& weight) {
 	if (history.empty()) return true;	
 	log->LogF(TEXT("IsWeightChanged: %f != %f = %d"), weight.weight, history.back().weight, !weight.equals(history.back()));
-	//lastTimeSuccess = GetTickCount(); //this must guarded by CS too!
+	
 	return !weight.equals(history.back());
 }
 
-Measurement CScales::HandleWeight(Measurement& weight) {	//this is blocking function, must be guarded by critical section	
+Measurement CScales::HandleWeight(Measurement& weight) {	
 	//weight is changed and state is OK
 	log->LogF(TEXT("HandleWeight(): %f, %d"), weight.weight, weight.state);
 	if (history.size() >= MAX_HISTORY) {
@@ -307,8 +270,8 @@ Measurement CScales::HandleWeight(Measurement& weight) {	//this is blocking func
 		lastGoodWeight = weight.weight;
 		lastTimeSuccess = GetTickCount();
 	}
-	history.push_back(weight); //save to history
-	WriteWeightToFile(weight); //and write to file
+	history.push_back(weight);
+	WriteWeightToFile(weight); 
 	return weight;
 }//HandleWeight()
 
@@ -323,7 +286,7 @@ STDMETHODIMP CScales::GetWeight(DOUBLE* AWeight)
 {		
 	if (!isInit()) return E_FAIL;
 	if (MODEL_SEPARATE) {
-		//just return weight
+		
 		if (history.empty()) {
 			*AWeight = 0.0;
 		}
@@ -350,14 +313,6 @@ STDMETHODIMP CScales::GetWeight(DOUBLE* AWeight)
 
 STDMETHODIMP CScales::IsStable(VARIANT_BOOL * AMotion)
 {
-	/*if (!scalesPort) return E_FAIL;
-	CString a;
-	a.Format(TEXT("IsStable(): %s"), stable?TEXT("YES"):TEXT("NO"));
-	Log(a);	
-	if (stable)
-		*AMotion = VARIANT_TRUE;
-	else
-		*AMotion = VARIANT_FALSE;*/
 	return S_OK;
 }
 
